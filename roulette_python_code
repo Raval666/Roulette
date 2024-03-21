@@ -1,0 +1,94 @@
+import random
+
+def spin_roulette():
+    return random.randint(0, 36)  # Generating a random number from 0 to 36 representing the roulette wheel
+
+def calculate_winnings(result, bets):
+    winnings = 0
+    for bet in bets:
+        if bet[0] == 'red':
+            if result in red_numbers:
+                winnings += bet[1] * 2  # Double the bet for a red win
+        elif bet[0] == 'black':
+            if result in black_numbers:
+                winnings += bet[1] * 2  # Double the bet for a black win
+        elif bet[0] == 'odd':
+            if result % 2 != 0 and result != 0:
+                winnings += bet[1] * 2  # Double the bet for an odd win
+        elif bet[0] == 'even':
+            if result % 2 == 0 and result != 0:
+                winnings += bet[1] * 2  # Double the bet for an even win
+        elif bet[0] == 'number':
+            if result == bet[1]:
+                winnings += bet[2] * 36  # 35:1 payout for winning on a single number
+        elif bet[0] == 'column':
+            if result in bet[1]:
+                winnings += bet[2] * 3  # 2:1 payout for winning on a column
+        elif bet[0] == 'dozen':
+            if result in bet[1]:
+                winnings += bet[2] * 3  # 2:1 payout for winning on a dozen
+    return winnings
+
+# Define red and black numbers
+red_numbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+black_numbers = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35]
+
+# Main function to run the simulation
+def main():
+    balance = 5000
+    total_bet = 0
+    
+    # Example bets
+    bets = []
+    
+    red_bet = input("Do you want to bet on red? (Enter amount or 'e' to skip): ")
+    if red_bet.lower() != 'e':
+        bets.append(('red', float(red_bet)))
+    
+    black_bet = input("Do you want to bet on black? (Enter amount or 'e' to skip): ")
+    if black_bet.lower() != 'e':
+        bets.append(('black', float(black_bet)))
+    
+    odd_bet = input("Do you want to bet on odd? (Enter amount or 'e' to skip): ")
+    if odd_bet.lower() != 'e':
+        bets.append(('odd', float(odd_bet)))
+    
+    even_bet = input("Do you want to bet on even? (Enter amount or 'e' to skip): ")
+    if even_bet.lower() != 'e':
+        bets.append(('even', float(even_bet)))
+    
+    column_bet = input("Do you want to bet on a column? (Enter column number(s) separated by commas or 'e' to skip): ")
+    if column_bet.lower() != 'e':
+        columns = [int(col) for col in column_bet.split(",")]
+        column_bet_amount = float(input("Enter the bet amount for column(s): "))
+        bets.append(('column', columns, column_bet_amount))
+    
+    dozen_bet = input("Do you want to bet on a dozen? (Enter dozen number(s) separated by commas or 'e' to skip): ")
+    if dozen_bet.lower() != 'e':
+        dozens = [int(doz) for doz in dozen_bet.split(",")]
+        dozen_bet_amount = float(input("Enter the bet amount for dozen(s): "))
+        bets.append(('dozen', dozens, dozen_bet_amount))
+    
+    number_bet = input("Do you want to bet on a specific number? (Enter number and amount separated by comma or 'e' to skip): ")
+    if number_bet.lower() != 'e':
+        number, amount = map(float, number_bet.split(','))
+        bets.append(('number', int(number), amount))
+    
+    for bet in bets:
+        if isinstance(bet[1], list):
+            total_bet += bet[2]  # Add the bet amount for column and dozen bets
+        else:
+            total_bet += bet[1]  # Add the bet amount for other types of bets
+    
+    result = spin_roulette()
+    print("The roulette landed on:", result)
+    
+    winnings = calculate_winnings(result, bets)
+    balance += winnings - total_bet
+    
+    print("Total bet:", total_bet)
+    print("Total winnings:", winnings)
+    print("Balance:", balance)
+
+if __name__ == "__main__":
+    main()
